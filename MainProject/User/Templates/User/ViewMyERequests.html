@@ -1,0 +1,63 @@
+{% extends 'User/Head.html' %}
+{% load static %}
+{% block content %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <!-- <style>
+        .collapsetable{
+        border-collapse: collapse;
+        border: 10px solid rgb(10, 10, 13);
+        }
+        </style> -->
+</head>
+<body>
+    <div id="tab">
+    <!-- <center><h1><i>Your E-Waste Collection Requests </i></h1></center> -->
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <table  cellpadding="20px"  align="center" bgcolor="white" >
+        <tr>
+            <th colspan="10"><i><b><center>Your E-Waste Collection Requests</center></b></i></th>
+        </tr>
+        <tr>
+            <th>Sl.No</th>
+            <th>Date</th>
+            <th>Details</th>
+            <th>Collection Point</th>
+            <th>Request Status</th>
+           
+              
+        </tr> 
+       {% for i in res %}
+      
+        <tr>
+            <td>{{forloop.counter}}</td>
+            <td>{{i.ewastebooking_date}}</td>
+            <td>{{i.ewastebooking_details}}</td>
+            <td>{{i.ewastebooking_collectionpoint}}</td>
+            <td>
+                {% if i.ewastebooking_status == 0 %}
+                <p><font color="red">Pending</font></p>
+                {% elif i.ewastebooking_status == 1 %}
+                <p><font color="blue"><b><i>Assigned</i></b></font></p>
+                {% elif i.ewastebooking_status == 2 %}
+                <p><font color="green"><b><i>Completed</i></b></font></p>
+                {% endif %}
+            </td>
+            
+        </tr>
+       
+        {% endfor %}      
+    </table>
+  </div>  
+</body>
+</html>
+{% endblock content %}

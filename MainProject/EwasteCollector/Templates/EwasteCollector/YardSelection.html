@@ -1,0 +1,77 @@
+{% extends 'EwasteCollector/Head.html' %}
+{% load static %}
+{% block content %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <div id="tab">
+    <form method="post">
+        {% csrf_token %}
+    <!-- <h1 align="center"><i>Select The Yard You Dumped The Waste</i></h1> -->
+    <table border="1" align="center" cellpadding="10" style="border-collapse: collapse;">
+        <tr>
+            <th colspan="5"><center><i>Select The Yard You Dumped The Waste </i></center></th>    
+            </tr>
+        <tr>
+            <td>User's Name:</td>
+            <td>{{res.ewastebooking.user.user_name}}</td>
+        </tr>
+        <tr>
+            <td>User's Contact:</td>
+            <td>{{res.ewastebooking.user.user_contact}}</td>
+        </tr>
+        <tr>
+            <td>Collection Details:</td>
+            <td>{{res.ewastebooking.ewastebooking_details}}</td>
+        </tr>
+        <tr>
+            <td>Collected Address:</td>
+            <td>{{res.ewastebooking.ewastebooking_collectionpoint}}</td>
+        </tr>
+        <tr>
+            <td>Select Yard:</td>
+                <td><select name="ddl_yard">
+                    <option value="">--SELECT--</option>
+                    {% for i in y %}
+                    <option value="{{i.id}}">{{i}}</option>
+                    {% endfor %}
+    
+    
+                </select></td>
+            
+        </tr>
+        <tr>
+            <td>Ewaste Total Weight (<font color="red">per kg</font>):</td>
+            <td><input type="text" name="txt_weight"></td>
+        </tr>
+
+        <tr>
+            <td colspan="2" align="center"><input type="submit" name="btn_submit" value="Done"> <input type="reset" name="btn_reset" value="Reset"></td>
+        <tr>
+    </table>
+</form>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+  </div>
+</body>
+</html>
+{% endblock content %}
