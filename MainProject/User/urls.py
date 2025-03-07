@@ -15,6 +15,7 @@ urlpatterns = [
     path('delservice/<int:sid>',views.DelServ,name="delservice"),
     path('viewbill/<int:bid>', views.ViewServiceBill,name="viewbill"),
     path('viewpay/<int:blid>', views.PaymentService,name="viewpay"),
+    
     path('userewastereq/', views.UserEWaste,name="userewastereq"), 
     path('viewuserewastereq/', views.ViewUserEWaste,name="viewuserewastereq"), 
     path('product/', views.Prodview,name="product"),
