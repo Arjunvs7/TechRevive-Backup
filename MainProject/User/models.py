@@ -33,3 +33,4 @@ class Ewastebooking(models.Model):
     ewastebooking_status=models.IntegerField(default=0)
     ewastebooking_collectionpoint=models.CharField(max_length=100)
     user=models.ForeignKey(User,on_delete=models.SET_NULL,null=True)        
+

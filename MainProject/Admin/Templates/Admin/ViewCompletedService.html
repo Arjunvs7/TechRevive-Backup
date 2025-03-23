@@ -49,7 +49,7 @@
                 {% endif %}
             </td>
             {% if i.servicebooking.Servicebook_status == 4 and i.servicebooking.payment_status == 0 %}
-            <td><a href="{% url 'webadmin:alertemail' i.id %}">Alert()</a>
+            <!-- <td><a href="{% url 'webadmin:alertemail' i.id %}">Alert()</a> -->
             {% endif %}
             <td>
                 <a href="{% url 'webadmin:delete_completed_service' i.id %}" 

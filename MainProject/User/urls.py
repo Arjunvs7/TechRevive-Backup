@@ -16,6 +16,13 @@ urlpatterns = [
     path('viewbill/<int:bid>', views.ViewServiceBill,name="viewbill"),
     path('viewpay/<int:blid>', views.PaymentService,name="viewpay"),
     
+    path('product/', views.ProductListView, name='product_list'),
+    path('create-checkout-session/<int:pid>/', views.create_checkout_session, name='create_checkout_session'),
+    path('payment-success/', views.payment_success, name='payment_success'),
+    path('payment-cancel/', views.payment_cancel, name='payment_cancel'),
+
+ 
+    
     path('userewastereq/', views.UserEWaste,name="userewastereq"), 
     path('viewuserewastereq/', views.ViewUserEWaste,name="viewuserewastereq"), 
     path('product/', views.Prodview,name="product"),

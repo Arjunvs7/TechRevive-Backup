@@ -1,0 +1,16 @@
+<!-- templates/checkout.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Demo Payment Checkout</title>
+  <script src="https://js.stripe.com/v3/"></script>
+</head>
+<body>
+  <h2>Demo Payment Checkout</h2>
+  <form action="{% url 'create_checkout_session' %}" method="POST">
+    {% csrf_token %}
+    <button type="submit">Pay $10</button>
+  </form>
+</body>
+</html>

@@ -11,16 +11,20 @@ from Admin.models import Assignservicebook, Servicebook
 
 
 
+
+
+
 def delete_completed_service(request, sid):
     if 'aid' in request.session:  # Check if admin is logged in
         try:
             assigned_service = Assignservicebook.objects.get(id=sid)
-
-            # Get the related service booking
+            # Get the related service booking, which might be None
             service_booking = assigned_service.servicebooking  
 
-            # Delete both entries
-            service_booking.delete()
+            # Delete the service booking if it exists
+            if service_booking:
+                service_booking.delete()
+            # Delete the assigned service regardless
             assigned_service.delete()
 
             return redirect('webadmin:viewcompleted')  # Redirect to completed services page
@@ -28,6 +32,25 @@ def delete_completed_service(request, sid):
             return redirect('webadmin:viewcompleted')  # If service does not exist, still redirect
     else:
         return redirect('guest:Home')  # Redirect to home if not logged in
+
+
+# def delete_completed_service(request, sid):
+#     if 'aid' in request.session:  # Check if admin is logged in
+#         try:
+#             assigned_service = Assignservicebook.objects.get(id=sid)
+
+#             # Get the related service booking
+#             service_booking = assigned_service.servicebooking  
+
+#             # Delete both entries
+#             service_booking.delete()
+#             assigned_service.delete()
+
+#             return redirect('webadmin:viewcompleted')  # Redirect to completed services page
+#         except Assignservicebook.DoesNotExist:
+#             return redirect('webadmin:viewcompleted')  # If service does not exist, still redirect
+#     else:
+#         return redirect('guest:Home')  # Redirect to home if not logged in
 
     
 # Create your views here.
@@ -448,17 +471,48 @@ def deltype(request,did):
      else:
         return redirect('guest:Home') 
 
+
+
+from decimal import Decimal
+from django.shortcuts import redirect, render, get_object_or_404
+from Admin.models import Product, Type
+
 def ProductAdd(request):
     if 'aid' in request.session:
-        typr=Type.objects.all()
-        if request.method=="POST":
-            ty=Type.objects.get(id=request.POST.get('ddl_type'))
-            Product.objects.create(Product_name=request.POST.get('txt_pname'),product_image=request.FILES.get('file_photo'),Product_description=request.POST.get('txt_pdescp'),type=ty)
+        typr = Type.objects.all()
+        if request.method == "POST":
+            ty = get_object_or_404(Type, id=request.POST.get('ddl_type'))
+            # Retrieve the price string from the form; default to '0.00' if not provided.
+            price_str = request.POST.get('txt_price', '0.00')
+            try:
+                price_value = Decimal(price_str)
+            except Exception:
+                price_value = Decimal("0.00")
+            
+            Product.objects.create(
+                Product_name=request.POST.get('txt_pname'),
+                product_image=request.FILES.get('file_photo'),
+                Product_description=request.POST.get('txt_pdescp'),
+                type=ty,
+                price=price_value  # Here, price_value is defined above.
+            )
             return redirect('webadmin:prodadd')
         else:
-            return render(request,"Admin/AddProduct.html",{'typ':typr})
+            return render(request, "Admin/AddProduct.html", {'typ': typr})
     else:
-        return redirect('guest:Home') 
+        return redirect('guest:Home')
+
+# def ProductAdd(request):
+#     if 'aid' in request.session:
+#         typr=Type.objects.all()
+#         if request.method=="POST":
+#             ty=Type.objects.get(id=request.POST.get('ddl_type'))
+#             Product.objects.create(Product_name=request.POST.get('txt_pname'),product_image=request.FILES.get('file_photo'),Product_description=request.POST.get('txt_pdescp'),type=ty,price=price_value)
+#             return redirect('webadmin:prodadd')
+#         else:
+#             return render(request,"Admin/AddProduct.html",{'typ':typr})
+#     else:
+#         return redirect('guest:Home') 
     
     
 def ProductView(request):

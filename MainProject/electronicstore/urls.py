@@ -26,6 +26,8 @@ urlpatterns = [
     path('User/', include('User.urls')),
     path('Technician/', include('Technician.urls')),    
     path('EwasteCollector/', include('EwasteCollector.urls')),
+    path('User/', include(('User.urls', 'user'), namespace='user')),
+
 ]
 
 if settings.DEBUG:

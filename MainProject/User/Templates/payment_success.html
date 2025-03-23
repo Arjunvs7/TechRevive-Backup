@@ -1,0 +1,62 @@
+{% extends "User/Head.html" %}
+{% load static %}
+{% block content %}
+<style>
+  /* Container for the tick animation */
+  .tick-container {
+    margin: 0 auto 20px;
+    width: 100px;
+    height: 100px;
+  }
+  /* Blue filled circle */
+  .tick__circle {
+    fill: #4285f4; /* Google blue */
+    stroke: none;
+    opacity: 0;
+    transform: scale(0.5);
+    animation: fillCircle 0.8s ease-out forwards;
+  }
+  /* White check mark */
+  .tick__check {
+    stroke: #fff;
+    stroke-width: 4;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    fill: none;
+    opacity: 0;
+    stroke-dasharray: 48;
+    stroke-dashoffset: 48;
+    animation: drawCheck 0.5s ease-out forwards 0.8s;
+  }
+  @keyframes fillCircle {
+    from { opacity: 0; transform: scale(0.5); }
+    to { opacity: 1; transform: scale(1); }
+  }
+  @keyframes drawCheck {
+    from {
+      stroke-dashoffset: 48;
+      opacity: 0;
+    }
+    to {
+      stroke-dashoffset: 0;
+      opacity: 1;
+    }
+  }
+</style>
+
+<div class="payment-success-container" style="text-align: center; padding: 40px;">
+    <!-- Animated Tick SVG -->
+    <div class="tick-container">
+      <svg class="tick" viewBox="0 0 52 52">
+        <circle class="tick__circle" cx="26" cy="26" r="25"></circle>
+        <path class="tick__check" d="M14 27l7 7 16-16"></path>
+      </svg>
+    </div>
+    <h1 style="color: #2e7d32;">Payment Successful!</h1>
+    <p>Thank you for your purchase. Your payment has been processed successfully.</p>
+    <a href="{% url 'user:product_list' %}" class="continue-shopping-btn" 
+       style="display: inline-block; margin-top: 20px; padding: 10px 20px; background-color: #2e7d32; color: white; text-decoration: none; border-radius: 5px;">
+        Continue Shopping
+    </a>
+</div>
+{% endblock content %}

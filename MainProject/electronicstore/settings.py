@@ -134,3 +134,11 @@ EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_HOST_USER = 'fixyourgadgets8210@gmail.com'
 EMAIL_HOST_PASSWORD = 'kxeiiffqxpkujcoq'
+
+# settings.py
+
+# ... existing settings
+
+# Stripe configuration for demo payment
+STRIPE_PUBLISHABLE_KEY = 'pk_test_51R51SVJaxoqiAdhfeXjj2CEnemmUQI4qyglCDhoJBgVGblL4eziXO0nDqBF1lH1jaXgguJFcVn9WyDVDUoY7AlWF00XmwzZl9f'
+STRIPE_SECRET_KEY = 'sk_test_51R51SVJaxoqiAdhfNjaWBHF7zJ6o8VoV9GGTU5YYGVXlfoJ77ViwssEPr3pAimCDvhmAu9AUw9SaQO6J2fxZFVUj001T2qkqd8'

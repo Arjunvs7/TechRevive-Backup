@@ -73,7 +73,9 @@ class Product(models.Model):
     Product_name=models.CharField(max_length=50)
     product_image=models.FileField(upload_to='ProductDocs/')   
     Product_description=models.CharField(max_length=100)
-    type=models.ForeignKey(Type,on_delete=models.SET_NULL,null=True)     
+    type=models.ForeignKey(Type,on_delete=models.SET_NULL,null=True) 
+    price = models.DecimalField(max_digits=10, decimal_places=2,default=0.00)
+    
 
 class Gallery(models.Model):
     gallery_image=models.FileField(upload_to='GalleryDocs/')   
