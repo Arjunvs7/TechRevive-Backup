@@ -3,85 +3,134 @@ from Admin.models import *
 from Guest.models import *
 from User.models import *
 from Technician.models import Servicebill
-
-
-
-
-
-
-
-# # Create your views here.
-
-#  Create the Checkout View
-import stripe
 from decimal import Decimal
 from django.conf import settings
 from django.shortcuts import render, redirect, get_object_or_404
 from Admin.models import Product  # Import from the Admin app
+from .models import Order 
+import stripe
+from django.contrib import messages
+from .models import Order
 
-# Configure Stripe with your secret key
-stripe.api_key = settings.STRIPE_SECRET_KEY
+stripe.api_key = settings.STRIPE_SECRET_KEY  # Ensure you have this set in settings.py
 
 def create_checkout_session(request, pid):
-    # Retrieve the product based on the id passed in the URL
-    product = get_object_or_404(Product, id=pid)
-    
-    # Convert product price (in dollars) to cents (as an integer)
-    # For example, if product.price is Decimal('10.00'), amount_in_cents becomes 1000
-    amount_in_cents = int(product.price * 100)
-    
-    if request.method == 'POST':
-        try:
-            # Create a Stripe Checkout session using the product details and price
-            session = stripe.checkout.Session.create(
-                payment_method_types=['card'],
-                line_items=[{
-                    'price_data': {
-                        'currency': 'usd',
-                        'unit_amount': amount_in_cents,
-                        'product_data': {
-                            'name': product.Product_name,
-                            'description': product.Product_description,
-                        },
-                    },
-                    'quantity': 1,
-                }],
-                mode='payment',
-                # These URLs will be used by Stripe to redirect after payment is processed
-                # success_url=request.build_absolute_uri('/payment-success/'),
-                # cancel_url=request.build_absolute_uri('/payment-cancel/'),
-                success_url=request.build_absolute_uri('/User/payment-success/'),
-                cancel_url=request.build_absolute_uri('/User/payment-cancel/'),
+    if 'uid' not in request.session:
+        return redirect('guest:Home')  # Redirect if not logged in
 
-            )
-            return redirect(session.url)
-        except Exception as e:
-            return render(request, 'error.html', {'error': str(e)})
-    else:
-        # Optionally, render a page that confirms the product details before proceeding
-        return render(request, 'checkout.html', {'product': product})
+    product = get_object_or_404(Product, id=pid)
+
+    # ✅ Step 1: Save order to the database
+    order = Order.objects.create(
+        user_id=request.session['uid'],  # Assuming you store user ID in session
+        product=product,
+        total_price=product.price,
+        status='Pending'  # You can update it after payment
+    )
+    order.save()  # ✅ Make sure order is saved
+
+    # ✅ Step 2: Create Stripe Checkout Session
+    checkout_session = stripe.checkout.Session.create(
+        payment_method_types=['card'],
+        line_items=[{
+            'price_data': {
+                'currency': 'usd',
+                'unit_amount': int(product.price * 100),  # Convert to cents
+                'product_data': {'name': product.Product_name},
+            },
+            'quantity': 1,
+        }],
+        mode='payment',
+        success_url=request.build_absolute_uri('/User/payment-success/'),
+        cancel_url=request.build_absolute_uri('/User/payment-cancel/'),
+    )
+
+    return redirect(checkout_session.url, code=303)
+
 
 def payment_success(request):
-    return render(request, 'payment_success.html')
+    if 'uid' not in request.session:
+        return redirect('guest:Home')
+
+    # ✅ Get the latest pending order for this user and update status
+    order = Order.objects.filter(user_id=request.session['uid'], status='Pending').last()
+    print("Pending Order Found:", order)  # Debugging statement
+
+    if order:
+        order.status = 'Paid'
+        order.save()
+
+    return redirect('webuser:my_orders')  # Redirect to orders page
+
+
+# def my_orders(request):
+#     if not request.user.is_authenticated:
+#         return render(request, 'User/MyOrders.html', {'orders': []})  # Prevent unauthorized access
+
+#     order = Order.objects.filter(user=request.user).select_related('product').order_by('-created_at') # Fetch only logged-in user's orders
+#     print("Orders Found:", order)  # Debugging
+
+#     return render(request, 'User/MyOrders.html', {'order': order})
+
+def my_orders(request):
+    if 'uid' not in request.session:
+        return render(request, 'User/MyOrders.html', {'orders': []})  
+
+    user_id = request.session.get('uid')
+    print(f"Fetching orders for User ID: {user_id}")  # Debugging
+
+    # Ensure correct filtering
+    order = Order.objects.filter(user_id=user_id).select_related('product').order_by('-created_at')
+
+    print(f"Orders found: {order.count()}")  # Debugging
+    
+    return render(request, 'User/MyOrders.html', {'order': order})
+
+
+def create_order(request, product_id):
+    """
+    Create an order when Buy Now is clicked from product list view.
+    """
+    if 'uid' not in request.session:
+        messages.error(request, "Please log in first.")
+        return redirect('guest:Home')  # Adjust to your login URL
+
+    # Retrieve product or show error if not found
+    product = get_object_or_404(Product, id=product_id)
+
+    # Prevent duplicate pending orders
+    existing_order = Order.objects.filter(
+        user_id=request.session['uid'], product_id=product_id, status='pending'
+    ).first()
+
+    if existing_order:
+        messages.info(request, "You already have an ongoing order for this product.")
+        return redirect('webuser:my_orders')  # Redirect to user's orders
+
+    # Create order
+    order = Order.objects.create(
+        user_id=request.session['uid'],  # Store user ID from session
+        product=product,
+        total_price=product.price,
+        status='pending'  # Default status
+    )
+
+    # Redirect to Stripe Checkout for payment
+    return redirect('webuser:create_checkout_session', product_id)
+
+
 
 def payment_cancel(request):
-    return render(request, 'payment_cancel.html')
-
-# end of new f
-
-from django.shortcuts import render
-from Admin.models import Product
+    return render(request, 'User/payment_cancel.html')
 
 def ProductListView(request):
     # Retrieve all products from the Admin app
     products = Product.objects.all()
     return render(request, 'User/ProductListView.html', {'res': products})
 
-
-
 def homepageuser(request):
     if 'uid' in request.session:
-        user=User.objects.get(id=request.session["uid"])
+        user=User.objects.get(id=request.session["uid"]) 
         return render(request,"User/UserHomePage.html",{'data':user})
     else:
         return redirect('guest:Home')
@@ -246,12 +295,9 @@ def Prodview(request):
     return render(request,"User/ProductListView.html",{'res':pro})  
  else:
         return redirect('guest:Home')      
-         
-
 
 
 def logout(request):
     
     del request.session['uid']
     return redirect('guest:Home')
-    

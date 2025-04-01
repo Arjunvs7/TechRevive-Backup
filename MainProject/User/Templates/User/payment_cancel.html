@@ -1,36 +1,15 @@
 {% extends "User/Head.html" %}
 {% load static %}
+
+{% block title %}Payment Cancelled{% endblock %}
+
 {% block content %}
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>Payment Cancelled</title>
-  <style>
-      body {
-          font-family: Arial, sans-serif;
-          background-color: #ffebee;
-          padding: 40px;
-          text-align: center;
-      }
-      h1 {
-          color: #c62828;
-      }
-      a {
-          display: inline-block;
-          margin-top: 20px;
-          padding: 10px 20px;
-          background-color: #c62828;
-          color: white;
-          text-decoration: none;
-          border-radius: 5px;
-      }
-  </style>
-</head>
-<body>
-  <h1>Payment Cancelled</h1>
-  <p>Your payment was cancelled. If this was a mistake, please try again.</p>
-  <a href="{% url 'user:product_list' %}">Return to Products</a>
-</body>
-</html>
-{% endblock content %}
+<div style="text-align: center; padding: 40px; background-color: #ffebee; font-family: Arial, sans-serif;">
+    <h1 style="color: #c62828;">Payment Cancelled</h1>
+    <p>Your payment was cancelled. If this was a mistake, please try again.</p>
+    <a href="{% url 'user:product_list' %}" 
+       style="display: inline-block; margin-top: 20px; padding: 10px 20px; background-color: #c62828; color: white; text-decoration: none; border-radius: 5px;">
+       Return to Products
+    </a>
+</div>
+{% endblock %}

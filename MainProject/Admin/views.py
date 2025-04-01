@@ -425,20 +425,43 @@ def AssignCollector(request,aid):
      else:
         return redirect('guest:Home')
     
+    #Adding yard
+
+# def YardAdd(request):
+#     if 'aid' in request.session:
+#         yar=Yard.objects.all()
+#         if request.method=="POST":
+#          y=Yard.objects.filter(yard_name__icontains=request.POST.get("txt_yname"))
+#          if y:
+#              return render(request,"Admin/AddYard.html",{'res':yar,'msg':"Data already exists"})
+#          else:     
+#             Yard.objects.create(yard_name=request.POST.get('txt_yname'))
+#             return render(request,"Admin/AddYard.html",{'res':yar,'msg':"Data Inserted"})
+#         else:
+#          return render(request,"Admin/AddYard.html",{'res':yar})
+#     else:
+#         return redirect('guest:Home')
+
+from django.shortcuts import render, redirect
+from .models import District, Yard
+
 def YardAdd(request):
-    if 'aid' in request.session:
-        yar=Yard.objects.all()
-        if request.method=="POST":
-         y=Yard.objects.filter(yard_name__icontains=request.POST.get("txt_yname"))
-         if y:
-             return render(request,"Admin/AddYard.html",{'res':yar,'msg':"Data already exists"})
-         else:     
-            Yard.objects.create(yard_name=request.POST.get('txt_yname'))
-            return render(request,"Admin/AddYard.html",{'res':yar,'msg':"Data Inserted"})
+    msg = ""
+    di = District.objects.all()  # Fetch all districts
+    if request.method == "POST":
+        district_id = request.POST.get("ddl_dis")
+        yard_name = request.POST.get("txt_yname")
+
+        if district_id and yard_name:
+            district = District.objects.get(id=district_id)
+            Yard.objects.create(yard_name=yard_name, district=district)
+            msg = "Yard added successfully!"
         else:
-         return render(request,"Admin/AddYard.html",{'res':yar})
-    else:
-        return redirect('guest:Home')
+            msg = "Please select a district and enter a yard name!"
+
+    res = Yard.objects.all()
+    return render(request, "Admin/AddYard.html", {"di": di, "res": res, "msg": msg})
+
 
 def delyardA(request,did):
     if 'aid' in request.session:
@@ -598,3 +621,130 @@ def district(request):
           return redirect('guest:Home')
       
 
+def delete_complaint(request, id):
+    complaint = get_object_or_404(Complaint, id=id)
+    complaint.delete()
+    
+    # Redirect to the correct complaint listing page
+    return redirect('webadmin:view_complaints')  # Ensure this is the correct URL name
+
+def view_complaints(request):  # Ensure this function exists
+    complaints = Complaint.objects.all()
+    return render(request, 'Admin/ViewComplaints.html', {'res': complaints})
+
+
+# from django.db.models import Sum
+# from django.db.models.functions import TruncMonth
+# from django.http import JsonResponse  # Use JsonResponse instead of DRF Response
+# from django.shortcuts import render
+# from User.models import Order  # Ensure correct import
+
+# def monthly_sales(request):
+#     sales_data = (
+#         Order.objects
+#         .annotate(month=TruncMonth('order_date'))  # Group by month
+#         .values('month')
+#         .annotate(total_sales=Sum('total_amount'))  # Sum total sales
+#         .order_by('month')
+#     )
+
+#     # Convert queryset to list of dictionaries with formatted dates
+#     sales_list = [
+#         {'month': entry['month'].strftime('%Y-%m'), 'total_sales': entry['total_sales']}
+#         for entry in sales_data
+#     ]
+
+#     return JsonResponse(sales_list, safe=False)  # Use JsonResponse instead of DRF's Response
+
+# def sales_chart(request):
+#     return render(request, "Admin/Saleschart.html")
+
+from django.db.models import Sum
+from django.db.models.functions import TruncMonth
+from django.http import JsonResponse
+from django.shortcuts import render
+from User.models import Order  # Ensure correct import
+
+def monthly_sales(request):
+    sales_data = (
+        Order.objects
+        .annotate(month=TruncMonth('created_at'))  # ✅ Group by month
+        .values('month')
+        .annotate(total_sales=Sum('total_price'))  # ✅ Sum sales per month
+        .order_by('month')
+    )
+
+    # Convert queryset to list with formatted month strings 
+    sales_list = [
+        {'month': entry['month'].strftime('%Y-%m'), 'total_sales': float(entry['total_sales'] or 0)}
+        for entry in sales_data
+    ]
+
+    return JsonResponse(sales_list, safe=False)  # ✅ Return JSON response
+
+from django.shortcuts import render, reverse
+
+def sales_chart(request):
+    return render(request, "Admin/Saleschart.html")
+
+
+from django.db.models import Sum
+from django.db.models.functions import TruncDay, TruncWeek, TruncMonth
+from django.http import JsonResponse
+from django.shortcuts import render
+from User.models import Order
+
+def sales_data(request):
+    filter_type = request.GET.get('filter', 'month')  # Default: month
+
+    if filter_type == 'day':
+        sales_data = (
+            Order.objects
+            .annotate(period=TruncDay('created_at'))
+            .values('period')
+            .annotate(total_sales=Sum('total_price'))
+            .order_by('period')
+        )
+    elif filter_type == 'week':
+        sales_data = (
+            Order.objects
+            .annotate(period=TruncWeek('created_at'))
+            .values('period')
+            .annotate(total_sales=Sum('total_price'))
+            .order_by('period')
+        )
+    else:  # Default: month
+        sales_data = (
+            Order.objects
+            .annotate(period=TruncMonth('created_at'))
+            .values('period')
+            .annotate(total_sales=Sum('total_price'))
+            .order_by('period')
+        )
+
+    # Convert queryset to list with formatted date strings
+    sales_list = [
+        {'period': entry['period'].strftime('%Y-%m-%d' if filter_type == 'day' else '%Y-%m'), 
+         'total_sales': float(entry['total_sales'] or 0)}
+        for entry in sales_data
+    ]
+
+    return JsonResponse(sales_list, safe=False)
+
+def sales_chart(request):
+    return render(request, "Admin/Saleschart.html")
+
+def report(request):
+    return render(request, "Admin/Report.html")
+
+def bill_report(request):
+    return render(request, 'Admin/ReportOnBill.html')
+
+def ewaste_report(request):
+    return render(request, 'Admin/ReportOnCompletedServices.html')
+
+def completed_service(request):
+    return render(request, 'Admin/ReportOnEwastebooking.html')
+
+def sales_report(request):
+    return render(request, 'Admin/Saleschart.html')

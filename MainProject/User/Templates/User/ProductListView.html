@@ -100,15 +100,18 @@
           <img src="{{ i.product_image.url }}" alt="Product Image">
           <div class="card-content">
               <h2>{{ i.Product_name }}</h2>
-              <p><b>Price:</b> ${{ i.price }}</p>
+              <p><b>Price:</b> ₹{{ i.price }}</p>
               <p>{{ i.Product_description }}</p>
               <p><b>Product Type:</b> <span class="product-type">{{ i.type.type_name }}</span></p>
+              <div class="product-item">
+                <!-- Product details -->
+                
+            </div>
           </div>
           <form action="{% url 'user:create_checkout_session' i.id %}" method="post">
             {% csrf_token %}
-            <button type="submit" class="buy-now" onclick="return confirm('Proceed to checkout?');">Buy Now</button>
-        </form>
-          <!-- <a href="#" class="buy-now">Buy Now</a> -->
+            <button type="submit" class="btn btn-primary">Buy Now</button>
+        </form>        
       </div>
       {% endfor %}
   </div>

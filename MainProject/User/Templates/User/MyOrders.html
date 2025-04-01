@@ -1,0 +1,35 @@
+{% extends 'User/Head.html' %}
+{% load static %}
+{% block content %}
+<div class="orders-container" style="max-width: 800px; margin: auto; padding: 20px;">
+    <h2 style="text-align: center; color: #2e7d32;">My Orders</h2>
+
+    {% if order %}
+        <div class="orders-container">
+            {% for order in order %}
+                <div class="order-item" style="border: 1px solid #ddd; padding: 15px; margin-bottom: 10px;">
+                    <p><strong>Order ID:</strong> {{ order.id }}</p>
+
+                    {% if order.product %}
+                        <p><strong>Product:</strong> {{ order.product.Product_name }}</p> <!-- Adjust field name if necessary -->
+                    {% else %}
+                        <p style="color: red;">⚠ Product details not available</p>
+                    {% endif %}
+
+                    <p><strong>Total Price:</strong> ₹{{ order.total_price }}</p>
+                    <p><strong>Status:</strong> {{ order.get_status_display }}</p> <!-- Status display with choices -->
+                    <p><strong>Date:</strong> {{ order.created_at|date:"d M Y, H:i" }}</p>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <p style="text-align: center; color: #777;">No orders found.</p>
+    {% endif %}
+    <div style="text-align: center; margin-top: 20px;">
+        <a href="{% url 'user:product_list' %}" 
+           style="display: inline-block; padding: 10px 20px; background-color: #2e7d32; color: white; text-decoration: none; border-radius: 5px;">
+            Continue Shopping
+        </a>
+    </div>
+</div>
+{% endblock content %}

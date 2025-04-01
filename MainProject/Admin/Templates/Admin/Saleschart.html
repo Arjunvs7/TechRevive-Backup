@@ -1,0 +1,117 @@
+{% extends 'Admin/Head.html' %}
+{% load static %}
+{% block content %}
+
+<h2 style="text-align: center; margin-bottom: 20px;">Sales Report</h2>
+
+<!-- Filter Buttons -->
+<div style="text-align: center; margin-bottom: 20px;">
+    <button class="filter-btn" onclick="fetchSalesData('day')">Daily</button>
+    <button class="filter-btn" onclick="fetchSalesData('week')">Weekly</button>
+    <button class="filter-btn" onclick="fetchSalesData('month')">Monthly</button>
+</div>
+
+<style>
+    .filter-btn {
+        background: linear-gradient(135deg, #007bff, #0056b3);
+        color: white;
+        border: none;
+        padding: 8px 20px;
+        margin: 5px;
+        font-size: 12px;
+        font-weight: bold;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
+    }
+
+    .filter-btn:hover {
+        background: linear-gradient(135deg, #0056b3, #003c7a);
+        transform: scale(1.05);
+    }
+
+    .filter-btn:active {
+        transform: scale(0.95);
+    }
+</style>
+
+<canvas id="salesChart"></canvas>
+
+<!-- Include Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+    let salesChart;  // Store chart instance
+
+    async function fetchSalesData(filter = 'month') {
+        try {
+            console.log(`Fetching ${filter} sales data...`);
+
+            const response = await fetch(`/Admin/api/sales-data/?filter=${filter}`); // Use query params
+
+            if (!response.ok) {
+                throw new Error(`Failed to fetch data: ${response.statusText}`);
+            }
+
+            const data = await response.json();
+            console.log("Sales Data Received:", data);
+
+            if (!data || data.length === 0) {
+                console.warn("No sales data available!");
+                return;
+            }
+
+            const labels = data.map(entry => entry.period);
+            const sales = data.map(entry => entry.total_sales);
+
+            // Ensure canvas exists
+            const canvas = document.getElementById('salesChart');
+            if (!canvas) {
+                console.error("Canvas element not found!");
+                return;
+            }
+
+            const ctx = canvas.getContext('2d');
+
+            // Destroy previous chart instance before creating a new one
+            if (salesChart) {
+                salesChart.destroy();
+            }
+
+            salesChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: `Sales (${filter})`,
+                        data: sales,
+                        backgroundColor: 'rgba(54, 162, 235, 0.5)',
+                        borderColor: 'rgba(54, 162, 235, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        y: {
+                            beginAtZero: false,  // Prevents starting at 0
+                            min: 200,  // Set the minimum Y-axis value to 200
+                            ticks: {
+                                stepSize: 50  // Adjust this for better scaling
+                            }
+                        }
+                    }
+                }
+            });
+
+        } catch (error) {
+            console.error("Error loading sales data:", error);
+        }
+    }
+
+    // Call function after DOM is loaded (default: Monthly data)
+    document.addEventListener("DOMContentLoaded", () => fetchSalesData('month'));
+</script>
+
+{% endblock content %}

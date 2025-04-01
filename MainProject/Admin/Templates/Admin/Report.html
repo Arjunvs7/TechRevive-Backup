@@ -1,0 +1,193 @@
+{% extends 'Admin/Head.html' %} 
+{% load static %}  
+{% block content %} 
+<div class="dashboard-container">
+    <h2 class="dashboard-title">Reports Overview</h2>
+    <div class="reports-grid">
+        <a href="{% url 'webadmin:bill_report' %}" class="report-card bill-card">
+            <div class="icon-container">
+                <span class="icon-text">$</span>
+            </div>
+            <span class="report-title">Bill Reports</span>
+        </a>
+        <a href="{% url 'webadmin:ewaste_report' %}" class="report-card ewaste-card">
+            <div class="icon-container">
+                <span class="icon-text">♻️</span>
+            </div>
+            <span class="report-title">E-Waste Collection</span>
+        </a>
+        <a href="{% url 'webadmin:completed_service' %}" class="report-card service-card">
+            <div class="icon-container">
+                <span class="icon-text">✓</span>
+            </div>
+            <span class="report-title">Completed Services</span>
+        </a>
+        <a href="{% url 'webadmin:sales_report' %}" class="report-card sales-card">
+            <div class="icon-container">
+                <span class="icon-text">📊</span>
+            </div>
+            <span class="report-title">Sales Analytics</span>
+        </a>
+    </div>
+</div>
+
+<style>
+    .dashboard-container {
+        max-width: 1200px;
+        margin: 30px auto;
+        background: #ffffff;
+        padding: 25px;
+        border-radius: 8px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+    }
+    
+    .dashboard-title {
+        font-size: 24px;
+        color: #333;
+        margin-bottom: 25px;
+        font-weight: 600;
+        text-align: left;
+        padding-bottom: 15px;
+        border-bottom: 1px solid #eaeaea;
+    }
+    
+    .reports-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+        gap: 20px;
+    }
+    
+    .report-card {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 25px 20px;
+        background-color: #f8f9fa;
+        border-radius: 8px;
+        text-decoration: none;
+        color: #495057;
+        transition: all 0.3s ease;
+        border: 1px solid #eaeaea;
+    }
+    
+    /* Base colors for each card */
+    .bill-card {
+        background-color: rgba(0, 123, 255, 0.05);
+    }
+    
+    .ewaste-card {
+        background-color: rgba(40, 167, 69, 0.05);
+    }
+    
+    .service-card {
+        background-color: rgba(255, 193, 7, 0.05);
+    }
+    
+    .sales-card {
+        background-color: rgba(220, 53, 69, 0.05);
+    }
+    
+    /* Hover effects for each card */
+    .bill-card:hover {
+        background-color: rgba(0, 123, 255, 0.15);
+        border-color: #007bff;
+        transform: translateY(-5px);
+        box-shadow: 0 5px 15px rgba(0, 123, 255, 0.2);
+    }
+    
+    .ewaste-card:hover {
+        background-color: rgba(40, 167, 69, 0.15);
+        border-color: #28a745;
+        transform: translateY(-5px);
+        box-shadow: 0 5px 15px rgba(40, 167, 69, 0.2);
+    }
+    
+    .service-card:hover {
+        background-color: rgba(255, 193, 7, 0.15);
+        border-color: #ffc107;
+        transform: translateY(-5px);
+        box-shadow: 0 5px 15px rgba(255, 193, 7, 0.2);
+    }
+    
+    .sales-card:hover {
+        background-color: rgba(220, 53, 69, 0.15);
+        border-color: #dc3545;
+        transform: translateY(-5px);
+        box-shadow: 0 5px 15px rgba(220, 53, 69, 0.2);
+    }
+    
+    .icon-container {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        margin-bottom: 15px;
+        transition: all 0.3s ease;
+    }
+    
+    /* Icon container colors matching their cards */
+    .bill-card .icon-container {
+        background-color: rgba(0, 123, 255, 0.1);
+    }
+    
+    .ewaste-card .icon-container {
+        background-color: rgba(40, 167, 69, 0.1);
+    }
+    
+    .service-card .icon-container {
+        background-color: rgba(255, 193, 7, 0.1);
+    }
+    
+    .sales-card .icon-container {
+        background-color: rgba(220, 53, 69, 0.1);
+    }
+    
+    /* Icon text colors matching their themes */
+    .bill-card .icon-text {
+        color: #007bff;
+    }
+    
+    .ewaste-card .icon-text {
+        color: #28a745;
+    }
+    
+    .service-card .icon-text {
+        color: #996008;
+    }
+    
+    .sales-card .icon-text {
+        color: #dc3545;
+    }
+    
+    .icon-text {
+        font-size: 28px;
+        font-weight: bold;
+    }
+    
+    .report-title {
+        font-size: 16px;
+        font-weight: 500;
+        text-align: center;
+    }
+    
+    /* On hover, icon container gets slightly darker */
+    .report-card:hover .icon-container {
+        transform: scale(1.1);
+    }
+    
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+        .reports-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+    }
+    
+    @media (max-width: 480px) {
+        .reports-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+{% endblock content %}

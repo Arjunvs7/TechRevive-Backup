@@ -1,6 +1,11 @@
 from django.urls import path
 from Admin import views 
 app_name="webadmin"
+from .views import monthly_sales, sales_chart
+from Admin.views import sales_chart ,sales_data
+
+
+
 
 urlpatterns = [
     path('district/', views.district,name="district"),
@@ -16,8 +21,11 @@ urlpatterns = [
     path('technician/', views.techreg,name="technician"),
     path('deltechnician/<int:tid>/', views.deltechnician, name="deltechnician"),
 
+    path('view_complaints/', views.ViewUserComplaints, name='view_complaints'),  # Use the correct function name
+    path('delete_complaint/<int:id>/', views.delete_complaint, name='delete_complaint'),
+
     path('adminhome/', views.Homepageadmin,name="adminhome"),
-    path('viewucomp/', views.ViewUserComplaints,name="viewucomp"),
+    path('viewucomp/', views.ViewUserComplaints,name="viewucomp"),  
     path('compreply/<int:cid>',views.ComplaintReplyD,name="compreply"),
     path('viewufeed/', views.ViewUserFeedbacks,name="viewufeed"),
     path('delfeed/<int:fid>',views.DelFeedback,name="delfeed"),
@@ -46,7 +54,23 @@ urlpatterns = [
     path('viewgal/<int:cid>', views.GalleryView,name="viewgal"),
     path('removprod/<int:did>', views.RemoveProduct,name="removprod"),
     path('repbill/', views.BillReport,name="repbill"),
-     path('servbrep/', views.ServiceReport,name="servbrep"),
-      path('ewastebrep/', views.EwasteBReport,name="ewastebrep"),
+    path('servbrep/', views.ServiceReport,name="servbrep"),
+    path('ewastebrep/', views.EwasteBReport,name="ewastebrep"),
+
+    path('api/monthly_sales/', monthly_sales, name='monthly_sales'),  # ✅ API for sales data
+    path('sales-chart/', sales_chart, name='sales-chart'),  # ✅ Page to display the graph
+
+    path('sales-chart/', sales_chart, name='sales-chart'),
+    path('api/sales-data/', sales_data, name='sales-data'),  # API for sales data
+
+    path('report/', views.report, name='report'),
+
+    path('bill-report/', views.bill_report, name='bill_report'),
+    path('ewaste-report/', views.ewaste_report, name='ewaste_report'),
+    path('completed-service/', views.completed_service, name='completed_service'),
+    path('sales-report/', views.sales_report, name='sales_report'),
+    
+
+
      path('logout/', views.logout,name="logout"), 
-] 
+]  

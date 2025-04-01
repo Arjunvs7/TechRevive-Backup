@@ -58,11 +58,12 @@
             <div class="navbar-nav ms-auto p-4 p-lg-0">
                 <a href="{%url 'webuser:userhome' %}" class="nav-item nav-link active">Home</a>
                 <div class="nav-item dropdown">
-                    <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">Profile</a> 
+                    <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">Accounts</a> 
                     <div class="dropdown-menu m-0">
                        <a href="{%url 'webuser:userprofile' %}"  class="dropdown-item">My Profile</a>
                        <a href="{%url 'webuser:useredit' %}" class="dropdown-item">Edit Profile</a>
                        <a href="{%url 'webuser:userchangepass' %}" class="dropdown-item">Change Password</a>
+                       <a href="{%url 'webuser:my_orders' %}" class="dropdown-item">My Orders</a>
                    </div> 
                </div>
                <div class="nav-item dropdown">

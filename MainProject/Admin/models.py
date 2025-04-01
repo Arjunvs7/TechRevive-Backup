@@ -62,6 +62,7 @@ class Assignewastebooking(models.Model):
 
 class Yard(models.Model):
     yard_name=models.CharField(max_length=50)
+    district = models.ForeignKey(District, on_delete=models.CASCADE, default=1)  # Set a valid District ID
 
     def __str__(self):
         return self.yard_name
@@ -76,7 +77,6 @@ class Product(models.Model):
     type=models.ForeignKey(Type,on_delete=models.SET_NULL,null=True) 
     price = models.DecimalField(max_digits=10, decimal_places=2,default=0.00)
     
-
 class Gallery(models.Model):
     gallery_image=models.FileField(upload_to='GalleryDocs/')   
     product=models.ForeignKey(Product,on_delete=models.SET_NULL,null=True)        
